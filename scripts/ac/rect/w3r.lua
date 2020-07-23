@@ -1,0 +1,2 @@
+local rects = {}
+return rects

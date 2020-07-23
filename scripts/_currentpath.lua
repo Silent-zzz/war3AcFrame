@@ -1,0 +1,1 @@
+package.path = package.path .. ';C:/Users/Administrator/Desktop/dztest\\scripts\\?.lua;C:/Users/Administrator/Desktop/dztest\\scripts\\?\\init.lua;C:/Users/Administrator/Desktop/dztest\\w3x2lni\\plugin\\import\\scripts\\?.lua;C:/Users/Administrator/Desktop/dztest\\w3x2lni\\plugin\\import\\scripts\\?\\init.lua'
