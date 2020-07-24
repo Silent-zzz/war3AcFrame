@@ -28,13 +28,14 @@ mt.skill = nil
 
 --创建漂浮文字
 local function text(heal)
-	if heal.target ~= ac.player.self.hero then
+	--如果治疗目标不是自己，则不创建漂浮单位
+	if heal.target.owner ~= ac.player.self then
 		return
 	end
 	local tag = heal.target.heal_texttag
 	if tag and ac.clock() - tag.time < 2000 then
 		tag.heal = tag.heal + heal.heal
-		tag:setText(('%.f'):format(tag.heal), 8 + (tag.heal ^ 0.5) / 5)
+		tag:setText(('+%.f'):format(tag.heal), 8 + (tag.heal ^ 0.5) / 5)
 	else
 		local x, y = heal.target:get_point():get()
 		local z = heal.target:get_point():getZ()
@@ -42,9 +43,9 @@ local function text(heal)
 		{
 			string = ('+%.f'):format(heal.heal),
 			size = 8 + (heal.heal ^ 0.5) / 5,
-			position = ac.point(x - 60, y, z - 30),
+			position = ac.point(x - 40, y+20, z - 30),
 			speed = 86,
-			angle = -45,
+			angle = 90,
 			red = 20,
 			green = 100,
 			blue = 20,
@@ -62,8 +63,9 @@ function heal:__call(heal)
 	end
 
 	if heal.skill == nil then
-		log.warnning('治疗没有关联技能')
-		log.warnning(debug.traceback())
+		-- log.warnning('治疗没有关联技能')
+		-- log.warnning(debug.traceback())
+		print("本次治疗没有关联技能,目标：",heal.target,"来源：",heal.source)
 	end
 	
 	setmetatable(heal, self)

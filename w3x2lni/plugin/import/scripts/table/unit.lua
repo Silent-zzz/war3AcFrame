@@ -16,14 +16,15 @@ return {
         ['经验'] = 2000,
         ['金钱'] = 500,
         type = '英雄',
-        hero_skill = {"test技能","test技能1"}
+        hero_skill = {"test技能"},
+        hide_skill = {"test技能1"}
     },
     ["商店A"] = {
         id = 'n003',
         attribute = {
             ['生命上限'] = 4000,
         },
-        type = '建筑',
+        type = '商店',
         restriction = {'无敌', '定身'}
     },
     ["商店B"] = {
@@ -31,7 +32,7 @@ return {
         attribute = {
             ['生命上限'] = 4000,
         },
-        type = '建筑',
+        type = '商店',
         restriction = {'无敌', '定身'}
     }
 }

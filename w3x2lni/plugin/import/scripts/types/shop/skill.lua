@@ -126,15 +126,17 @@ local function buyItem(hero, name)
 	end
 
 	local item = get_item_info(name)
-	local my_gold = player:getGold()
+	-- local my_gold = player:getGold()
+	local my_source = player:getRes(item.goldtype or "gold")
 	local gold = item:get_gold() or 0
-	if gold > my_gold then
-		player:sendMsg('|cffffff00金钱不够,还差 ' .. (gold - my_gold))
+	if gold > my_source then
+		player:sendMsg('|cffffff00金钱不够,还差 ' .. (gold - my_source))
 		return false
 	end
 
 	--扣钱
-	player:addGold( - gold)
+	-- player:addGold( - gold)
+	player:addRes(item.goldtype or "gold",-gold)
 
 	--创建物品给英雄
 	local skl = hero:add_skill(name, '物品')
@@ -228,6 +230,7 @@ function self.init_skills()
 					local affix_types = affix.types
 					local tips = {}
 					local gold = item.gold
+					local goldtype = item.goldtype or "gold"
 					for k, v in pairs(item:get_base_affix()) do
 						if k == 'gold' then
 							gold = gold + v
@@ -261,7 +264,7 @@ function self.init_skills()
 						gold = gold - (dest:get_gold() or 0)
 					end
 					if gold > 0 then
-						table.insert(tips, 1, affix_types['gold']:format(gold))
+						table.insert(tips, 1, affix_types['gold']:format(gold,goldtype))
 					end
 					if item.tip then
 						table.insert(tips, '')
@@ -313,7 +316,6 @@ function self.init_skills()
 						if not item then
 							return
 						end
-						-- print("设置商店技能")
 						self:set_show(item)
 						self.current_item = item
 						return

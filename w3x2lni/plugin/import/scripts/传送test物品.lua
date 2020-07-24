@@ -9,19 +9,19 @@ ac.skill["传送test物品"]{
         attack = 100,
         mana = 10,
     },
-    on_add = function (self,owner)
+    on_add = function (owner)
 
-        print("传送！")
-        local item = self.parent_skill or self
+        -- print("传送！")
+        -- local item = self.parent_skill or self
         -- local owner = self.parent_skill.owner
         -- self:remove()
         -- item:remove()
         owner:blink(ac.point(0,700),true)
         
         -- ac.wait(3,function ()
-            owner:add_buff '晕眩' {
-                time = 5,
-            }
+            -- owner:add_buff '晕眩' {
+            --     time = 5,
+            -- }
         -- end)
         
         

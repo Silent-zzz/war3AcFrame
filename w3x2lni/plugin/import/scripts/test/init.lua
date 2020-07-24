@@ -1,5 +1,5 @@
 
-require 'test.memory_test'
+-- require 'test.memory_test'
 local player = require 'ac.player'
 local console = require 'jass.console'
 

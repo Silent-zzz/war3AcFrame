@@ -1318,7 +1318,10 @@ end
 
 --获得技能模板(war3中的技能id)
 function mt:get_ability_id(type,slotid,passive)
-	local slotid = self.slotid
+	local slotid = slotid or self.slotid
+	if type == "隐藏" or type == "通用" then
+		return nil
+	end
 	-- if slotid then
 	-- 	local p = self.owner:get_owner()
 	-- 	return p:get_ability_id(slotid)
@@ -1652,7 +1655,7 @@ function unit.__index:add_skill(name, type, slotid, data)
 		log.error('技能不存在', name)
 		return false
 	end
-
+	
 	if not self.skills then
 		self.skills = {}
 	end
@@ -1684,6 +1687,16 @@ function unit.__index:add_skill(name, type, slotid, data)
 	for k, v in pairs(ac.skill[name]) do
 		if data[k] == nil then
 			data[k] = v
+		end
+	end
+	if  type == '物品' then
+		if name:find("传送") and data.on_add then
+			data.on_add(self)
+			return
+		end
+		if self:isBagFull() then
+			self.owner:sendMsg '|cffffff00物品栏已满|r'
+			return
 		end
 	end
 	local skill = setmetatable(data, skill)
@@ -1746,6 +1759,7 @@ function unit.__index:add_skill(name, type, slotid, data)
 	end
 	if type == "物品" then
 		if name:find("传送") then
+			skill:remove()
 			-- print(skill:remove())
 			-- return
 		elseif skill then
