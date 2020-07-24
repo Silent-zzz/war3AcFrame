@@ -1224,6 +1224,14 @@ function mt:bagSize(n)
         return jass.UnitInventorySize(self.handle)
     end
 end
+function mt:isBagFull()
+    for i = 1, jass.UnitInventorySize(self.handle) do
+        if jass.UnitItemInSlot(self.handle, i-1) == 0 then
+            return false
+        end
+    end
+    return true
+end
 local function init_unit(handle, p)
 	if unit.all_units[handle] then
 		return unit.all_units[handle]

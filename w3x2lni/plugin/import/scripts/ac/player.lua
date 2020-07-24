@@ -194,7 +194,33 @@ end
 function mt:is_ally(dest)
 	return self:get_team() == dest:get_team()
 end
-
+function mt:getRes(name)
+	if name == '木材' or name == "木头" then
+		return self:getlumber()
+	elseif name == '人口' then
+		return self:getusedfood()
+	end
+	self[name] = self[name] or 0
+	return self[name]
+end
+function mt:addRes(name,value,isUpSever)
+	if name == "木材" or name == "木头" then
+		value = tonumber(value)
+		self:addlumber(value or 0)
+		return
+	elseif name == "gold" or name == "金币" or name == "黄金" then
+		value = tonumber(value)
+		self:addGold(value or 0)
+		return
+	end
+	self[name] = self[name] or 0
+	value = tonumber(value) or 0
+	self[name] = self[name] + value
+	if isUpSever then
+		--同步服务器用
+	end
+	-- self:sendMsg ('成功增加'..name..' '..value)
+end
 --获得金钱
 --	金钱数量
 --	[漂浮文字显示位置]

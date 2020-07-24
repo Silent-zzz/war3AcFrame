@@ -95,6 +95,7 @@ local page = shop.createPage '第二'
 		local group = cj.CreateGroup()
 		cj.GroupEnumUnitsOfPlayer(group,player.handle,nil)
 		player:addGold(999999)
+		player:addRes("积分",99999)
 		player.hero = ac.unit(cj.FirstOfGroup(group))
 		-- player.hero:find_skill("test技能"):disable_ability()
 		player.hero:add_skill("传送test物品","物品")
