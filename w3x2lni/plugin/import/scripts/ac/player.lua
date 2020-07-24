@@ -66,7 +66,7 @@ function mt:each_unit()
 	end
 	return result
 end
---
+--删除玩家单位
 function mt:remove_unit(unit)
 	if not unit then
 		return
