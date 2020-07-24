@@ -438,6 +438,7 @@ local level_color = {
 --获取说明
 function mt:get_tip(hero)
 	local gold = self.gold or 0
+	local goldtype = self.goldtype or "gold"
 	local tips = {}
 	--词缀部分
 	local affix_types = affix.types
@@ -455,6 +456,8 @@ function mt:get_tip(hero)
 		for k, v in pairs(self:get_affixs()) do
 			if k == 'gold' then
 				gold = gold + v
+			elseif k == 'goldtype' then
+				goldtype = v
 			elseif v ~= 0 then
 				local fmt = affix_types[k]
 				if fmt then
@@ -465,7 +468,7 @@ function mt:get_tip(hero)
 	-- end
 	--说明部分
 	if gold > 0 then
-		table.insert(tips, 1, affix_types['gold']:format(gold))
+		table.insert(tips, 1, affix_types['gold']:format(gold,goldtype))
 	end
 	if self.tip then
 		table.insert(tips, '')

@@ -33,6 +33,9 @@ mt.gold = 0
 --零钱
 mt.gold_pool = 0
 
+mt.unitlist = {}
+mt.ipunitlist = {}
+
 --鼠标x
 mt.mouse_x = 0
 
@@ -50,6 +53,34 @@ end
 function mt:event(name)
 	return ac.event_register(self, name)
 end
+--添加玩家单位
+function mt:add_unit(unit)
+	self.unitlist[unit.handle] = unit
+	table.insert(self.ipunitlist,unit)
+end
+--遍历玩家单位
+function mt:each_unit()
+	local result = {}
+	for _, v in ipairs(self.ipunitlist) do
+		table.insert(result,v)
+	end
+	return result
+end
+--删除玩家单位
+function mt:remove_unit(unit)
+	if not unit then
+		return
+	end
+	self.unitlist[unit.handle] = nil
+	for _,v in ipairs(self.ipunitlist) do
+		if v.handle == unit.handle then
+			table.remove(self.ipunitlist,_)
+		end
+	end
+end
+
+
+
 
 local ac_game = ac.game
 
@@ -194,7 +225,33 @@ end
 function mt:is_ally(dest)
 	return self:get_team() == dest:get_team()
 end
-
+function mt:getRes(name)
+	if name == '木材' or name == "木头" then
+		return self:getlumber()
+	elseif name == '人口' then
+		return self:getusedfood()
+	end
+	self[name] = self[name] or 0
+	return self[name]
+end
+function mt:addRes(name,value,isUpSever)
+	if name == "木材" or name == "木头" then
+		value = tonumber(value)
+		self:addlumber(value or 0)
+		return
+	elseif name == "gold" or name == "金币" or name == "黄金" then
+		value = tonumber(value)
+		self:addGold(value or 0)
+		return
+	end
+	self[name] = self[name] or 0
+	value = tonumber(value) or 0
+	self[name] = self[name] + value
+	if isUpSever then
+		--同步服务器用
+	end
+	-- self:sendMsg ('成功增加'..name..' '..value)
+end
 --获得金钱
 --	金钱数量
 --	[漂浮文字显示位置]

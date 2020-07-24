@@ -280,7 +280,11 @@ end
 		
 		--从表中删除单位
 		unit.all_units[self.handle] = nil
-
+		for _, v in ipairs(unit.ipall_units) do
+			if v.handle == self.handle then
+				table_remove(unit.ipall_units,_)
+			end
+		end
 		unit.removed_units[self] = self
 		unit.removed_handles[self.handle] = true
 		dbg.handle_unref(self.handle)
@@ -1224,6 +1228,14 @@ function mt:bagSize(n)
         return jass.UnitInventorySize(self.handle)
     end
 end
+function mt:isBagFull()
+    for i = 1, jass.UnitInventorySize(self.handle) do
+        if jass.UnitItemInSlot(self.handle, i-1) == 0 then
+            return false
+        end
+    end
+    return true
+end
 local function init_unit(handle, p)
 	if unit.all_units[handle] then
 		return unit.all_units[handle]
@@ -1243,7 +1255,7 @@ local function init_unit(handle, p)
 	u.owner = p or player[1 + jass.GetPlayerId(jass.GetOwningPlayer(handle))]
 	u.born_point = u:get_point()
 	unit.all_units[handle] = u
-
+	table_insert(unit.ipall_units,u)
 	--令物体可以飞行
 	u:add_ability 'Arav'
 	u:remove_ability 'Arav'
@@ -1927,6 +1939,10 @@ function unit.saveDefaultUnits()
 	local group = ac.selector():allow_god():get()
 	ignore_flag = false
 	for _, u in ipairs(group) do
+		for key, value in pairs(u) do
+			print(key,value)
+			
+		end
 		dbg.handle_ref(u.handle)
 		--设置单位物品栏个数
 		u:bagSize(6)
@@ -1941,6 +1957,8 @@ end
 function unit.init()
 	--全局单位索引
 	unit.all_units = {}
+	--索引用单位表
+	unit.ipall_units = {}
 	unit.removed_handles = {}
 	unit.removed_units = setmetatable({}, { __mode = 'kv' })
 
@@ -1951,7 +1969,7 @@ function unit.init()
 	unit.frame = 8
 
 	ac.loop(1000 / unit.frame, function()
-		for _, u in pairs(unit.all_units) do
+		for _, u in ipairs(unit.ipall_units) do
 			u:update()
 		end
 	end)

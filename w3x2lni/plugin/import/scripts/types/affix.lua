@@ -5,7 +5,7 @@ affix.__index = mt
 
 --词缀表
 affix.list = {
-	{'gold',			'|cffcccccc价格: |cffffff11%.f|r\n'},
+	{'gold',			'|cffcccccc价格: |cffffff11%.f %s|r\n'},
 	{'shoes_count',		'脱离战斗后，移动速度在10秒内提升50%%'},	
 	{'attack',			'攻击+%s'},
 	{'attack_rate',		'攻击+%s%%'},

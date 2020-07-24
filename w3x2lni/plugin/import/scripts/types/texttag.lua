@@ -51,10 +51,10 @@ mt.angle = 90
 	mt.alpha = 100
 
 --生命周期
-mt.life = 3
+mt.life = 1
 
 --淡化
-mt.fade = 2
+mt.fade = 0.7
 
 --永久性
 mt.permanent = false

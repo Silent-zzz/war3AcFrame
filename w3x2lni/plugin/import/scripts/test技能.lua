@@ -37,10 +37,15 @@ function dxt:on_cast_channel()
                 :in_range(point,300)
                 :is_enemy(source)
                 :ipairs() do
-        u:damage {
+        -- u:damage {
+        --     source = source,
+        --     skill = self,
+        --     damage = 1000,
+        -- }
+        source:heal {
+            -- skill = self,
             source = source,
-            skill = self,
-            damage = 1000,
+            heal = 100
         }
     end
 end
