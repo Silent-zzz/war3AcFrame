@@ -1,5 +1,6 @@
 local japi = require 'jass.japi'
 local dz = require 'jass.dzapi'
+local cj = require 'jass.common'
 local dz_api = {}
 function dz_api.DzTriggerRegisterMouseEventTrg(trg, status, btn)
 	if trg == nil then
