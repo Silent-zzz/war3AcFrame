@@ -388,7 +388,10 @@ end
 	end
 
 --是否在指定位置附近(计算碰撞)
-function mt:is_in_range(p, radius)
+function mt:is_in_range(p, radius,is_cast)
+	if is_cast then
+		return self:get_point() * p:get_point() - (self:get_collision() + p:get_collision()) <= radius
+	end
 	return self:get_point() * p:get_point() - self:get_selected_radius() <= radius
 end
 
@@ -1608,9 +1611,10 @@ end
 
 local function restriction_stealth(unit, flag)
 	if flag then
-		unit:add_ability 'A00E'
+		--加一个隐身技能的物编
+		unit:add_ability '@YIN'
 	else
-		unit:remove_ability 'A00E'
+		unit:remove_ability '@YIN'
 	end
 end
 
@@ -1696,6 +1700,11 @@ local function restriction_hard(self, flag)
 		japi.EXPauseUnit(self.handle, true)
 	else
 		japi.EXPauseUnit(self.handle, false)
+		if self:get_owner():is_player() then
+			--取消暂停单位的时候，给单位添加删除一个幽灵技能，让单位可以自动攻击附近敌人，否则，单位会原地不动
+			self:add_ability('@yza')
+			self:remove_ability('@yza')
+		end
 		if self._recover_skill then
 			local skill = self._recover_skill
 			self._recover_skill = nil

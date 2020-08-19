@@ -92,8 +92,8 @@ mt.cast_channel_time = 0
 --施法出手
 mt.cast_shot_time = 0
 
---施法完成
-mt.cast_finish_time = 0
+--施法完成 改为0.01，防止单位释放技能后无法操控
+mt.cast_finish_time = 0.01
 
 --打断移动
 mt.break_move = 1
@@ -2165,7 +2165,8 @@ function mt:is_in_range(target)
 		return true
 	end
 	if target.type == 'unit' then
-		if not target:is_in_range(self.owner, self.range) then
+		--判断是否为释放技能，如果是释放技能判断范围，则加上两个单位的碰撞体积，否则在极限距离时，选择单位不会释放技能效果
+		if not target:is_in_range(self.owner, self.range,true) then
 			return false
 		end
 	elseif target.type == 'point' then
@@ -2223,6 +2224,7 @@ function mt:cast(target, data)
 	if self.force_cast == 1 or (data and data.force_cast == 1) then
 		return self:cast_force(target, self)
 	end
+	-- war3技能范围计算是根据两个单位的碰撞体积加上技能范围，所以，判定的时候需要加上两个单位的碰撞体积
 	if not self:is_in_range(target) then
 		return false
 	end
@@ -2292,11 +2294,16 @@ function mt:cast_force(target, data)
 	local need_animation = #hero._casting_list == 1 or self.instant == 0
 	
 	if self.break_move == 1 and self.cast_start_time + self.cast_channel_time + self.cast_shot_time + self.cast_finish_time > 0 then
-		hero:add_restriction '硬直'
-		self._cast_hard = true
-		if need_animation and target and hero:get_point() * target:get_point() > 0 then
-			hero:set_facing(hero:get_point() / target:get_point())
-		end
+		--添加一个命令单位停止，否则，硬直好像会出bug
+		hero:issue_order("stop")
+		--加一个0秒等待回调
+		ac.wait(0,function ()
+			hero:add_restriction '硬直'
+			self._cast_hard = true
+			if need_animation and target and hero:get_point() * target:get_point() > 0 then
+				hero:set_facing(hero:get_point() / target:get_point())
+			end
+		end)
 	end
 	
 	self:_change_step 'start'
@@ -2450,17 +2457,30 @@ function mt:_cast_end()
 		end
 	end
 	self._is_casting = false
-	if self._cast_hard then
-		hero:remove_restriction '硬直'
-	end
-	if #hero._casting_list == 0 then
-		hero:set_animation_speed(1)
-		if self._has_cast_finish then
-			hero:add_animation 'stand'
-		else
-			hero:set_animation 'stand'
+	ac.wait(0,function ()
+		if self._cast_hard then
+			hero:remove_restriction '硬直'
 		end
-	end
+		if #hero._casting_list == 0 then
+			hero:set_animation_speed(1)
+			if self._has_cast_finish then
+				hero:add_animation 'stand'
+			else
+				hero:set_animation 'stand'
+			end
+		end
+	end)
+	-- if self._cast_hard then
+	-- 	hero:remove_restriction '硬直'
+	-- end
+	-- if #hero._casting_list == 0 then
+	-- 	hero:set_animation_speed(1)
+	-- 	if self._has_cast_finish then
+	-- 		hero:add_animation 'stand'
+	-- 	else
+	-- 		hero:set_animation 'stand'
+	-- 	end
+	-- end
 end
 
 -- 停止技能
